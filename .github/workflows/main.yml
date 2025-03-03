@@ -1,0 +1,36 @@
+name: Traffic Simulator
+
+on:
+  workflow_dispatch:
+    inputs:
+      website_url:
+        description: 'Website URL to simulate traffic for'
+        required: true
+      visits_required:
+        description: 'Number of visits required'
+        required: true
+        default: 10
+
+jobs:
+  simulate-traffic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests faker pyautogui
+
+      - name: Simulate traffic
+        env:
+          WEBSITE_URL: ${{ github.event.inputs.website_url }}
+          VISITS_REQUIRED: ${{ github.event.inputs.visits_required }}
+        run: |
+          python scripts/simulate_traffic.py
